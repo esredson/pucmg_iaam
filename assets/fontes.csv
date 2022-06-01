@@ -1,0 +1,15 @@
+nome|url
+BBC|http://www.bbc.co.uk/portuguese/index.xml
+G1|http://g1.globo.com/dynamo/rss2.xml					
+G1 (Economia)|http://g1.globo.com/dynamo/economia/rss2.xml		
+G1 (Mundo)|http://g1.globo.com/dynamo/mundo/rss2.xml			
+R7|http://noticias.r7.com/feed.xml				
+R7 (Política)|https://noticias.r7.com/politica/feed.xml		
+R7 (Economia)|https://noticias.r7.com/economia/feed.xml	
+R7 (Internacional)|https://noticias.r7.com/internacional/feed.xml
+UOL|http://rss.uol.com.br/feed/noticias.xml
+UOL (Economia)|http://rss.uol.com.br/feed/economia.xml
+Agência Brasil|http://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml
+Agência Brasil (Política)|http://agenciabrasil.ebc.com.br/rss/politica/feed.xml
+Agência Brasil (Economia)|http://agenciabrasil.ebc.com.br/rss/economia/feed.xml
+Agência Brasil (Internacional)|http://agenciabrasil.ebc.com.br/rss/internacional/feed.xml
