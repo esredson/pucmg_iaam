@@ -1,10 +1,12 @@
-#import schedule # pip install schedule
+# -*- coding: utf-8 -*-
+import schedule # pip install schedule
 import pandas as pd
 import feedparser # pip install feedparser
 from tqdm import tqdm
 from pymongo import MongoClient # pip install pymongo
 from datetime import datetime
 from pytz import timezone
+import time
 
 def carregar_fontes():
     df = pd.read_csv('assets/fontes.csv', sep='|', header=0)
@@ -123,12 +125,15 @@ def armazenar(noticias):
     return
 
 def executar():
+    print('\nIniciando nova coleta...')
     fontes = carregar_fontes()
     noticias = baixar_e_preprocessar_ultimas_noticias(fontes)
     armazenar(noticias)
+    print(str(len(noticias)) + ' notícias coletadas, preprocessadas e armazenadas.\n')
 
-#schedule.every(10).minutes.do(executar)
-executar()
-
+schedule.every(1).minutes.do(executar)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
 
 

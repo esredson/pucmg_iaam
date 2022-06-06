@@ -1,0 +1,1 @@
+mongoimport --db trabalho_puc --collection noticias --type json --file /docker-entrypoint-initdb.d/noticias.json --jsonArray --host=localhost --port=27017
