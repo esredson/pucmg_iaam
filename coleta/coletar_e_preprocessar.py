@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-import schedule # pip install schedule
+import schedule
 import pandas as pd
-import feedparser # pip install feedparser
-from tqdm import tqdm
-from pymongo import MongoClient # pip install pymongo
+import feedparser
+from pymongo import MongoClient
 from datetime import datetime
 from pytz import timezone
 import time
 
 def carregar_fontes():
-    df = pd.read_csv('assets/fontes.csv', sep='|', header=0)
+    df = pd.read_csv('fontes.csv', sep='|', header=0)
     return df.to_dict('records')
 
 def normalizar_id(noticia):
@@ -111,17 +110,16 @@ def baixar_e_preprocessar_por_fonte(fonte):
     return [preprocessar(fonte['nome'], noticia) for noticia in noticias]
 
 def baixar_e_preprocessar_ultimas_noticias(fontes):
-    noticias_por_fonte = [baixar_e_preprocessar_por_fonte(fonte) for fonte in tqdm(fontes)]
+    noticias_por_fonte = [baixar_e_preprocessar_por_fonte(fonte) for fonte in fontes]
     return [noticia for fonte in noticias_por_fonte for noticia in fonte] # flattening
 
 def armazenar(noticias):
-    with MongoClient() as client: # MongoClient(host="localhost", port=27017)
+    with MongoClient(host="mongodb", port=27017) as client:
         db = client.trabalho_puc
         noticias_db = db.noticias
         for noticia in noticias:
             id_entry = {'id': noticia['id']}
             noticias_db.replace_one(id_entry, noticia, upsert=True)
-    #client.close() não necessário devido ao with
     return
 
 def executar():
@@ -129,8 +127,9 @@ def executar():
     fontes = carregar_fontes()
     noticias = baixar_e_preprocessar_ultimas_noticias(fontes)
     armazenar(noticias)
-    print(str(len(noticias)) + ' notícias coletadas, preprocessadas e armazenadas.\n')
+    print(str(len(noticias)) + ' notícias coletadas, preprocessadas e armazenadas\n')
 
+print("\nIniciando agendamento...\n")
 schedule.every(1).minutes.do(executar)
 while True:
     schedule.run_pending()

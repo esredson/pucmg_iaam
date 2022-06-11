@@ -1,0 +1,12 @@
+
+services:
+    mongodb:
+        build: ./mongodb
+        container_name: mongodb
+        ports:
+            - "27017:28017"
+    coleta:
+        build: ./coleta
+        container_name: coleta
+        depends_on:
+            - mongodb
