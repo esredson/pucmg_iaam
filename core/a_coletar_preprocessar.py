@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-import schedule
+
 import pandas as pd
 import feedparser
 from pymongo import MongoClient
 from datetime import datetime
 from pytz import timezone
-import time
 
 def carregar_fontes():
-    df = pd.read_csv('fontes.csv', sep='|', header=0)
+    df = pd.read_csv('a_fontes.csv', sep='|', header=0)
     return df.to_dict('records')
 
 def normalizar_id(noticia):
@@ -114,25 +113,24 @@ def baixar_e_preprocessar_ultimas_noticias(fontes):
     return [noticia for fonte in noticias_por_fonte for noticia in fonte] # flattening
 
 def armazenar(noticias):
-    with MongoClient(host="mongodb", port=27017) as client:
+    armazenadas = 0
+    with MongoClient(host="localhost", port=27017) as client: #trocar por localhost se fora do docker
         db = client.trabalho_puc
         noticias_db = db.noticias
         for noticia in noticias:
-            id_entry = {'id': noticia['id']}
-            noticias_db.replace_one(id_entry, noticia, upsert=True)
-    return
+            if noticias_db.count_documents({'id': noticia['id']}) == 0:
+                noticias_db.insert_one(noticia)
+                armazenadas+=1
+    return armazenadas
 
 def executar():
-    print('\nIniciando nova coleta...')
+    print('\nIniciando coleta e preprocessamento...')
     fontes = carregar_fontes()
     noticias = baixar_e_preprocessar_ultimas_noticias(fontes)
-    armazenar(noticias)
-    print(str(len(noticias)) + ' notícias coletadas, preprocessadas e armazenadas\n')
+    qtd_armazenadas = armazenar(noticias)
+    print(str(len(noticias)) + ' notícias coletadas e preprocessadas. ' + str(qtd_armazenadas) + ' armazenadas\n')
 
-print("\nIniciando agendamento...\n")
-schedule.every(1).minutes.do(executar)
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+if __name__ == "__main__":
+    executar()
 
 

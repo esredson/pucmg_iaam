@@ -1,12 +1,31 @@
 
 services:
     mongodb:
-        build: ./mongodb
+        build: ./containeres/mongodb
         container_name: mongodb
         ports:
-            - "27017:28017"
-    coleta:
-        build: ./coleta
-        container_name: coleta
+            - "27017:27017"
+    batch:
+        build: ./containeres/batch
+        container_name: batch
         depends_on:
             - mongodb
+        volumes:
+            - "./containeres/batch/volume:/app"
+            - "./core:/core"
+    notebook:
+        build: ./containeres/notebook
+        container_name: notebook
+        depends_on: 
+            - mongodb
+        ports: 
+            - "10000:8888"
+        volumes:
+            # Importante, sobre performance vs Windows: https://docs.docker.com/desktop/windows/wsl/
+            - "./containeres/notebook/volume:/app"
+            - "./core:/core"
+    #rest:
+        #build: ./containeres/rest
+        #container_name: rest
+        #depends_on:
+            #- mongodb
