@@ -1,5 +1,0 @@
-pandas
-feedparser
-pymongo
-datetime
-pytz

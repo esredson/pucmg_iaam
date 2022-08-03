@@ -5,9 +5,10 @@ import feedparser
 from pymongo import MongoClient
 from datetime import datetime
 from pytz import timezone
+import _common
 
 def carregar_fontes():
-    df = pd.read_csv('a_fontes.csv', sep='|', header=0)
+    df = pd.read_csv(_common.full_path('fontes.csv'), sep='|', header=0)
     return df.to_dict('records')
 
 def normalizar_id(noticia):
@@ -114,7 +115,7 @@ def baixar_e_preprocessar_ultimas_noticias(fontes):
 
 def armazenar(noticias):
     armazenadas = 0
-    with MongoClient(host="localhost", port=27017) as client: #trocar por localhost se fora do docker
+    with MongoClient(host="localhost", port=27017) as client: #mongodb se for no docker; localhost se fora
         db = client.trabalho_puc
         noticias_db = db.noticias
         for noticia in noticias:

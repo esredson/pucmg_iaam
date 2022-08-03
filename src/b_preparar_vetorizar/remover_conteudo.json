@@ -1,0 +1,46 @@
+{
+    "noticia": {
+      "titulo": {
+        "antes_de_preparar": [
+            "^VÍDEOS:",
+            "^Covid-19: veja boletim",
+            "eja .*vagas de emprego"
+        ],
+        "depois_de_preparar": [
+            "veja valores",
+            "oferta vagas emprego"
+        ]
+      },
+      "resumo": {
+        "antes_de_preparar": [
+            
+        ],
+        "depois_de_preparar": [
+            "completo experiencia"
+        ]
+      }
+    },
+    "trecho": {
+      "titulo": {
+        "antes_de_preparar": [
+            
+        ],
+        "depois_de_preparar": [
+            
+        ]
+      },
+      "resumo": {
+        "antes_de_preparar": [
+            "(?:\\.|\\n).*?(?:Veja|Confira|Assista|Saiba|Leia|Ouça|Compartilhe).*?(?:\\.|\\n|$)",
+            "(?:\\.|\\n).*?vídeos.*?(?:\\.|\\n|$)",
+            "(?:\\.|\\n).*?udo sobre.*?(?:\\.|\\n|$)",
+            "(?:\\.|\\n).*?apareceu primeiro.*?(?:\\.|\\n|$)",
+            "Getty Images.*?(\\n|\\.)",
+            "Reprodução\\s*/\\s*TV Globo"
+        ],
+        "depois_de_preparar": [
+            
+        ]
+      }
+    }
+  }
