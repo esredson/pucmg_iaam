@@ -16,7 +16,7 @@
             
         ],
         "depois_de_preparar": [
-            "completo experiencia"
+            
         ]
       }
     },
@@ -34,9 +34,7 @@
             "(?:\\.|\\n).*?(?:Veja|Confira|Assista|Saiba|Leia|Ouça|Compartilhe).*?(?:\\.|\\n|$)",
             "(?:\\.|\\n).*?vídeos.*?(?:\\.|\\n|$)",
             "(?:\\.|\\n).*?udo sobre.*?(?:\\.|\\n|$)",
-            "(?:\\.|\\n).*?apareceu primeiro.*?(?:\\.|\\n|$)",
-            "Getty Images.*?(\\n|\\.)",
-            "Reprodução\\s*/\\s*TV Globo"
+            "(?:\\.|\\n).*?apareceu primeiro.*?(?:\\.|\\n|$)"
         ],
         "depois_de_preparar": [
             

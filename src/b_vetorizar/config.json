@@ -1,0 +1,6 @@
+{
+	"usar_texto_preparado": "true",
+	"incluir_resumo": "false",
+    "modelo": "SBERT",
+	"reduzir_dimensionalidade": "true"
+}

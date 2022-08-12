@@ -14,16 +14,15 @@ services:
             - "./containers/batch/volume:/app"
             - "./core:/core"
     notebook:
-        build: ./containers/notebook
+        build:
+            context: ./
+            dockerfile: ./containers/notebook/Dockerfile
+        user: root
         container_name: notebook
         depends_on: 
             - mongodb
         ports: 
-            - "10000:8888"
-        volumes:
-            # Importante, sobre performance vs Windows: https://docs.docker.com/desktop/windows/wsl/
-            - "./containers/notebook/volume:/app"
-            - "./core:/core"
+            - "8888:8888"
     #rest:
         #build: ./containers/rest
         #container_name: rest

@@ -1,11 +1,12 @@
 FROM jupyter/base-notebook
 
-WORKDIR /app
+COPY ./src/ /app/notebook/
+COPY ./pyproject.toml /app/notebook/
+COPY ./poetry.lock /app/notebook/
 
-# Instalar bibliotecas
-#RUN pip install pipreqs
-#RUN pipreqs .
-#RUN pip install -r ./requirements.txt
+WORKDIR /app/notebook
+ENV PYTHONPATH=${PYTHONPATH}:${PWD}
 
-#RUN pip install -r ./requirements.txt
-#RUN pip install -r /core/requirements.txt
+RUN pip3 install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install

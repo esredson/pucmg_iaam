@@ -1,0 +1,4 @@
+{
+    "host_mongodb": "localhost",
+    "random_state": 42
+}
