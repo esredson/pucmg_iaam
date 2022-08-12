@@ -17,14 +17,18 @@ services:
         build:
             context: ./
             dockerfile: ./containers/notebook/Dockerfile
-        user: root
         container_name: notebook
         depends_on: 
             - mongodb
         ports: 
             - "8888:8888"
+        volumes:
+            - notebook_volume:/app/
     #rest:
         #build: ./containers/rest
         #container_name: rest
         #depends_on:
             #- mongodb
+
+volumes:
+    notebook_volume:

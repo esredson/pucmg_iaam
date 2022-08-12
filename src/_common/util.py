@@ -9,7 +9,7 @@ def full_path(nome_arq_a_carregar, arq_base=__file__):
    return full
 
 def carregar_configs():
-   with open(full_path('util.json'), encoding='utf-8') as json_file:
+   with open(full_path('config.json'), encoding='utf-8') as json_file:
       return json.load(json_file)
 
 def config(nome):
