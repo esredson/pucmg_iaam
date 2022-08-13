@@ -1,42 +1,42 @@
 {
-    "noticia": {
+    "remover_noticia": {
       "titulo": {
-        "antes_de_preparar": [
+        "antes_de_limpar": [
             "^VÍDEOS:",
             "^Covid-19: veja boletim",
             "eja .*vagas de emprego"
         ],
-        "depois_de_preparar": [
+        "depois_de_limpar": [
             "veja valores",
             "oferta vagas emprego"
         ]
       },
       "resumo": {
-        "antes_de_preparar": [
+        "antes_de_limpar": [
             
         ],
-        "depois_de_preparar": [
+        "depois_de_limpar": [
             
         ]
       }
     },
-    "trecho": {
+    "remover_trecho": {
       "titulo": {
-        "antes_de_preparar": [
+        "antes_de_limpar": [
             
         ],
-        "depois_de_preparar": [
+        "depois_de_limpar": [
             
         ]
       },
       "resumo": {
-        "antes_de_preparar": [
+        "antes_de_limpar": [
             "(?:\\.|\\n).*?(?:Veja|Confira|Assista|Saiba|Leia|Ouça|Compartilhe).*?(?:\\.|\\n|$)",
             "(?:\\.|\\n).*?vídeos.*?(?:\\.|\\n|$)",
             "(?:\\.|\\n).*?udo sobre.*?(?:\\.|\\n|$)",
             "(?:\\.|\\n).*?apareceu primeiro.*?(?:\\.|\\n|$)"
         ],
-        "depois_de_preparar": [
+        "depois_de_limpar": [
             
         ]
       }

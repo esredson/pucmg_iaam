@@ -13,19 +13,19 @@ import string
 from unidecode import unidecode
 from _common import util
 
-class Preparador:
+class Limpador:
 
 	def __init__(self):
 		nltk.download('stopwords')
 		self.stops = stopwords.words('portuguese')
 
-	def carregar_noticias_nao_preparadas(self):
+	def carregar_noticias_nao_limpas(self):
 		with MongoClient(host="localhost", port=27017) as client:
 			db = client.trabalho_puc
 			noticias_ls = list(db.noticias.find({
 				'$and': [
 					{ 
-						'titulo_preparado' : { 
+						'titulo_limpo' : { 
 							'$exists': False 
 						} 
 					},
@@ -44,25 +44,25 @@ class Preparador:
 			return noticias_df
 
 	def executar(self):
-		print('\nIniciando preparação do texto...')
-		noticias_df = self.carregar_noticias_nao_preparadas()
-		print(str(len(noticias_df)) + ' noticias serão preparadas...')
-		self.preparar(noticias_df)
+		print('\nIniciando limpeza do texto...')
+		noticias_df = self.carregar_noticias_nao_limpas()
+		print(str(len(noticias_df)) + ' noticias serão limpas...')
+		self.limpar(noticias_df)
 		util.armazenar_todas(noticias_df)
 
-	def preparar_se_necessario(self, df, remover_conteudo_inutil = True):
-		if 'titulo_preparado' not in df:
-			self.preparar(df, remover_conteudo_inutil=remover_conteudo_inutil)
+	def limpar_se_necessario(self, df, remover_conteudo_inutil = True):
+		if 'titulo_limpo' not in df:
+			self.limpar(df, remover_conteudo_inutil=remover_conteudo_inutil)
 
-	def preparar(self, df, remover_conteudo_inutil = True):
-		self.preparar_coluna(df, 'titulo', remover_duplicados=True, remover_conteudo_inutil=remover_conteudo_inutil)
-		self.preparar_coluna(df, 'resumo', remover_conteudo_inutil=remover_conteudo_inutil)
+	def limpar(self, df, remover_conteudo_inutil = True):
+		self.limpar_coluna(df, 'titulo', remover_duplicados=True, remover_conteudo_inutil=remover_conteudo_inutil)
+		self.limpar_coluna(df, 'resumo', remover_conteudo_inutil=remover_conteudo_inutil)
 
-	def preparar_coluna(self, df, coluna, remover_duplicados = False, remover_conteudo_inutil = False):
+	def limpar_coluna(self, df, coluna, remover_duplicados = False, remover_conteudo_inutil = False):
 		
-		print('Preparando ' + coluna)
+		print('Limpando ' + coluna)
 
-		coluna_nova = coluna + '_preparado'
+		coluna_nova = coluna + '_limpo'
 		coluna_nova_str = coluna_nova + '_str'
 
 		df[coluna_nova] = df[coluna]
@@ -72,8 +72,8 @@ class Preparador:
 			with open(util.full_path('remover_conteudo.json', __file__), encoding='utf-8') as json_file:
 				remover_conteudo_json = json.load(json_file)
 		
-			self.remover_conteudo(df, coluna, remover_conteudo_json['noticia'][coluna]['antes_de_preparar'], noticia_inteira=True)
-			self.remover_conteudo(df, coluna, remover_conteudo_json['trecho'][coluna]['antes_de_preparar'], noticia_inteira=False)
+			self.remover_conteudo(df, coluna, remover_conteudo_json['remover_noticia'][coluna]['antes_de_limpar'], noticia_inteira=True)
+			self.remover_conteudo(df, coluna, remover_conteudo_json['remover_trecho'][coluna]['antes_de_limpar'], noticia_inteira=False)
 		
 		# Removendo espaços extras...
 		df[coluna_nova] = [re.sub(' +', ' ', reg) for reg in df[coluna_nova]]
@@ -113,19 +113,19 @@ class Preparador:
 		df[coluna_nova_str] = [' '.join(reg) for reg in df[coluna_nova]]
 	
 		if remover_conteudo_inutil:
-			self.remover_conteudo(df, coluna_nova_str, remover_conteudo_json['noticia'][coluna]['depois_de_preparar'], noticia_inteira=True)
-			self.remover_conteudo(df, coluna_nova_str, remover_conteudo_json['trecho'][coluna]['depois_de_preparar'], noticia_inteira=False)
+			self.remover_conteudo(df, coluna_nova_str, remover_conteudo_json['remover_noticia'][coluna]['depois_de_limpar'], noticia_inteira=True)
+			self.remover_conteudo(df, coluna_nova_str, remover_conteudo_json['remover_trecho'][coluna]['depois_de_limpar'], noticia_inteira=False)
 		
 		if remover_duplicados:
-			duplicados_df = df.duplicated(subset='titulo_preparado_str', keep="first")
+			duplicados_df = df.duplicated(subset='titulo_limpo_str', keep="first")
 			df['ignorar'] = df['ignorar'] | duplicados_df
 						
-	def remover_conteudo(self, df, coluna, criterios, preparado = False, noticia_inteira = False):
+	def remover_conteudo(self, df, coluna, criterios, limpo = False, noticia_inteira = False):
 		
 		nome_coluna = coluna
 		
-		if preparado:
-			nome_coluna = coluna + 'preparado_str'
+		if limpo:
+			nome_coluna = coluna + 'limpo_str'
 			
 		for criterio in criterios:
 			if noticia_inteira:
@@ -135,4 +135,4 @@ class Preparador:
 
 
 if __name__ == "__main__":
-    Preparador().executar()
+    Limpador().executar()

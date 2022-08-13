@@ -1,5 +1,5 @@
 {
-	"usar_texto_preparado": "true",
+	"usar_texto_limpo": "true",
 	"incluir_resumo": "false",
     "modelo": "SBERT",
 	"reduzir_dimensionalidade": "true"

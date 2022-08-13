@@ -56,13 +56,13 @@ class Vetorizador:
 		self.vetorizar(noticias_df, **configs_dict)
 		util.armazenar_todas(noticias_df)
 
-	def vetorizar(self, df, usar_texto_preparado = True, modelo = 'SBERT', incluir_resumo = False, reduzir_dimensionalidade = False ):
+	def vetorizar(self, df, usar_texto_limpo = True, modelo = 'SBERT', incluir_resumo = False, reduzir_dimensionalidade = False ):
 		if (modelo == 'USE'):
-			self.vetorizar_use(df, usar_texto_preparado=usar_texto_preparado, incluir_resumo=incluir_resumo)
+			self.vetorizar_use(df, usar_texto_limpo=usar_texto_limpo, incluir_resumo=incluir_resumo)
 		elif (modelo == 'SBERT'):
-			self.vetorizar_sbert(df, usar_texto_preparado=usar_texto_preparado, incluir_resumo=incluir_resumo)
+			self.vetorizar_sbert(df, usar_texto_limpo=usar_texto_limpo, incluir_resumo=incluir_resumo)
 		elif (modelo == 'WORD2VEC'):
-			self.vetorizar_word2vec(df, usar_texto_preparado=usar_texto_preparado, incluir_resumo=incluir_resumo)
+			self.vetorizar_word2vec(df, usar_texto_limpo=usar_texto_limpo, incluir_resumo=incluir_resumo)
 		else:
 			raise ValueError("Modelo de linguagem invalido")
 		if reduzir_dimensionalidade:
@@ -88,7 +88,7 @@ class Vetorizador:
 				features.append(zero_vector)
 		return features
 
-	def gerar_conteudo(self, df, modo='preparado', incluir_resumo = False):
+	def gerar_conteudo(self, df, modo='limpo', incluir_resumo = False):
 		_modo = ('_' if len(modo) > 0 else '') + modo
 		if not incluir_resumo:
 			return df['titulo' + _modo]
@@ -99,11 +99,11 @@ class Vetorizador:
 		# https://www.sbert.net/docs/pretrained_models.html
 		self.model_sbert = SentenceTransformer('distiluse-base-multilingual-cased-v1') 
 
-	def vetorizar_sbert(self, df, usar_texto_preparado=True, incluir_resumo = False):
+	def vetorizar_sbert(self, df, usar_texto_limpo=True, incluir_resumo = False):
 		if self.model_sbert == None:
 			self.carregar_sbert()
 		print('Vetorizando com SBERT')
-		conteudo_df = self.gerar_conteudo(df, modo = ('preparado_str' if usar_texto_preparado else ''), incluir_resumo=incluir_resumo)
+		conteudo_df = self.gerar_conteudo(df, modo = ('limpo_str' if usar_texto_limpo else ''), incluir_resumo=incluir_resumo)
 		embeddings = self.model_sbert.encode(conteudo_df)
 		df['conteudo_vetorizado'] = embeddings.tolist()
 
@@ -112,11 +112,11 @@ class Vetorizador:
 		module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
 		self.model_use = hub.load(module_url) 
 
-	def vetorizar_use(self, df, usar_texto_preparado=True, incluir_resumo = False):
+	def vetorizar_use(self, df, usar_texto_limpo=True, incluir_resumo = False):
 		if self.model_use == None:
 			self.carregar_use()
 		print('Vetorizando com Google USE')
-		conteudo_df = self.gerar_conteudo(df, modo = ('preparado_str' if usar_texto_preparado else ''), incluir_resumo=incluir_resumo)
+		conteudo_df = self.gerar_conteudo(df, modo = ('limpo_str' if usar_texto_limpo else ''), incluir_resumo=incluir_resumo)
 		embeddings = self.model_use(conteudo_df)
 		df['conteudo_vetorizado'] = embeddings.numpy().tolist()
 
@@ -129,13 +129,13 @@ class Vetorizador:
 		print('Carregando modelo Word2Vec')
 		self.model_word2vec = gensim.models.KeyedVectors.load_word2vec_format(filename, binary=False)
 
-	def vetorizar_word2vec(self, df, usar_texto_preparado=True, incluir_resumo = False):
-		if (not usar_texto_preparado):
-			raise ValueError('Combinacao invalida. word2vec requer preparacao')
+	def vetorizar_word2vec(self, df, usar_texto_limpo=True, incluir_resumo = False):
+		if (not usar_texto_limpo):
+			raise ValueError('Combinacao invalida. word2vec requer limpeza')
 		if self.model_word2vec == None:
 			self.carregar_word2vec()
 		print('Vetorizando com Word2Vec')
-		conteudo_df = self.gerar_conteudo(df, modo = 'preparado', incluir_resumo=incluir_resumo)
+		conteudo_df = self.gerar_conteudo(df, modo = 'limpo', incluir_resumo=incluir_resumo)
 		df['conteudo_vetorizado'] = self.vetorizar_tirando_a_media(conteudo_df, wv=self.model_word2vec)
 
 	def reduzir_dimensionalidade(self, df, n_components=2):
