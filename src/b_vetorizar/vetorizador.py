@@ -92,7 +92,7 @@ class Vetorizador:
 		_modo = ('_' if len(modo) > 0 else '') + modo
 		if not incluir_resumo:
 			return df['titulo' + _modo]
-		return df['titulo' + _modo] + '' + df['resumo' + _modo]
+		return df['titulo' + _modo] + df['resumo' + _modo]
 
 	def carregar_sbert(self):
 		print('Baixando e carregando modelo SBERT')
