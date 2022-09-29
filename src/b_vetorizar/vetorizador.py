@@ -123,15 +123,15 @@ class Vetorizador:
 	def carregar_word2vec(self):
 		#http://nilc.icmc.usp.br/nilc/index.php/repositorio-de-word-embeddings-do-nilc
 		print('Baixando modelo Word2Vec')
-		filename = 'cbow_s100.txt.bz2'
+		filename = 'cbow_s300.txt.bz2'
 		if not os.path.isfile(filename):
-			urllib.request.urlretrieve('https://drive.google.com/uc?export=download&id=1n6D6XRkdKaDLucK_iNi5aVf3AlD5O7SP&confirm=t', filename)
+			urllib.request.urlretrieve('https://drive.google.com/uc?export=download&id=1VkkvPuKZRP0aedo44mFLrZJzQv_74N8J&confirm=t', filename)
 		print('Carregando modelo Word2Vec')
 		self.model_word2vec = gensim.models.KeyedVectors.load_word2vec_format(filename, binary=False)
 
 	def vetorizar_word2vec(self, df, usar_texto_limpo=True, incluir_resumo = False):
 		if (not usar_texto_limpo):
-			raise ValueError('Combinacao invalida. word2vec requer limpeza')
+			raise ValueError('Word2vec requer limpeza')
 		if self.model_word2vec == None:
 			self.carregar_word2vec()
 		print('Vetorizando com Word2Vec')
