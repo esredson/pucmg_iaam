@@ -105,6 +105,7 @@ class Vetorizador:
 		print('Vetorizando com SBERT')
 		conteudo_df = self.gerar_conteudo(df, modo = ('limpo_str' if usar_texto_limpo else ''), incluir_resumo=incluir_resumo)
 		embeddings = self.model_sbert.encode(conteudo_df)
+		embeddings = embeddings /  np.linalg.norm(embeddings, axis=1, keepdims=True)
 		df['conteudo_vetorizado'] = embeddings.tolist()
 
 	def carregar_use(self):
