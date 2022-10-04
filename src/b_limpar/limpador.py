@@ -69,7 +69,7 @@ class Limpador:
 		
 
 		if remover_conteudo_inutil:
-			with open(util.full_path('remover_conteudo.json', __file__), encoding='utf-8') as json_file:
+			with open(util.full_path('config_limpeza.json', __file__), encoding='utf-8') as json_file:
 				remover_conteudo_json = json.load(json_file)
 		
 			self.remover_conteudo(df, coluna, remover_conteudo_json['remover_noticia'][coluna]['antes_de_limpar'], noticia_inteira=True)
