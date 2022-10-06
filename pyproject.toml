@@ -26,6 +26,8 @@ hdbscan = "^0.8.28"
 tqdm = "^4.64.1"
 hyperopt = "^0.2.7"
 schedule = "^1.1.0"
+fastapi = "^0.85.0"
+uvicorn = {extras = ["standard"], version = "^0.18.3"}
 
 [tool.poetry.dev-dependencies]
 ipykernel = "^6.15.1"

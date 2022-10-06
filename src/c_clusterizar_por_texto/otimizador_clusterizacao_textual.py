@@ -12,7 +12,7 @@ class OtimizadorClusterizacaoTextual:
         self.df = df
 
     def objetivo(self, params):
-        self.clusterizador.clusterizar(self.df, epsilon = params['epsilon'], min_samples=params['min_samples'], metric=params['metric'])
+        self.clusterizador.clusterizar(self.df, epsilon = params['epsilon'], min_samples=None, metric=params['metric'])
         return {'loss': -len(Counter(self.df['assunto']).items()), 'status': STATUS_OK}
 
     def busca_bayesiana(self, espaco_busca, max_avaliacoes=100):
@@ -27,7 +27,6 @@ class OtimizadorClusterizacaoTextual:
         incluir_resumo = [True, False],
         modelo_linguagem = ['USE', 'SBERT', 'WORD2VEC'],
         epsilon = [0.01, 2.00],
-        min_samples = [2, 5],
         metric=['cosine'],
         random_state = util.config('random_state')
         ):
@@ -35,7 +34,6 @@ class OtimizadorClusterizacaoTextual:
         resultado = []
         espaco_busca = {
             'epsilon': hp.uniform('epsilon', epsilon[0], epsilon[1]),
-            'min_samples': hp.choice('min_samples', range(min_samples[0], min_samples[1])),
             'metric': hp.choice('metric', metric),
             'random_state': random_state
         }
@@ -52,7 +50,6 @@ class OtimizadorClusterizacaoTextual:
                         'usar_texto_limpo': l, 
                         'incluir_resumo': r,
                         'melhor_epsilon': resultado_bayesiana['melhores_valores']['epsilon'],
-                        'melhor_min_samples': resultado_bayesiana['melhores_valores']['min_samples'],
                         'melhor_metric': resultado_bayesiana['melhores_valores']['metric'],
                         'maior_num_classes': resultado_bayesiana['maior_num_classes']})
         return pd.DataFrame.from_records(resultado)
