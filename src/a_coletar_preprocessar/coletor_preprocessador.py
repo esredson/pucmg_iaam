@@ -117,7 +117,7 @@ class ColetorPreprocessador:
 
     def armazenar(self, noticias):
         armazenadas = 0
-        with MongoClient(host=util.host_mongodb, port=27017) as client:
+        with MongoClient(host=util.host_mongodb(), port=27017) as client:
             db = client.trabalho_puc
             noticias_db = db.noticias
             for noticia in noticias:
@@ -127,7 +127,7 @@ class ColetorPreprocessador:
         return armazenadas
 
     def executar(self):
-        print('\nColetando e preprocessando...')
+        print('\nColetando e preprocessando')
         fontes = self.carregar_fontes()
         noticias = self.baixar_e_preprocessar_ultimas_noticias(fontes)
         qtd_armazenadas = self.armazenar(noticias)

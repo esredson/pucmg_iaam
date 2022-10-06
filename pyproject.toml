@@ -25,6 +25,7 @@ gensim = "^4.2.0"
 hdbscan = "^0.8.28"
 tqdm = "^4.64.1"
 hyperopt = "^0.2.7"
+schedule = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
 ipykernel = "^6.15.1"

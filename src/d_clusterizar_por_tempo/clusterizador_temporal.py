@@ -2,16 +2,29 @@ import numpy as np
 from sklearn.neighbors import KernelDensity
 from scipy.signal import argrelextrema
 from datetime import timedelta
+from _common import util
+from pymongo import MongoClient
+
+import json
 
 class ClusterizadorTemporal:
-
-    KERNEL_DEFAULT = 'gaussian'
-    DENOMINADOR_BANDWIDTH_DEFAULT = 55
 
     def __init__(self):
         self.a = 0
 
-    def clusterizar(self, df, denominador_bandwidth = DENOMINADOR_BANDWIDTH_DEFAULT, kernel = KERNEL_DEFAULT):
+    def carregar_configs(self):
+        with open(util.full_path('config_clusterizacao_temporal.json', __file__)) as json_file:
+            return json.load(json_file)
+
+    def salvar_clusters(self, clusters):
+        print('Salvando clusters')
+        with MongoClient(host=util.host_mongodb(), port=27017) as client:
+            db = client.trabalho_puc
+            clusters_collection = db['clusters']
+            clusters_collection.delete_many({})
+            clusters_collection.insert_many(clusters)
+
+    def clusterizar(self, df, denominador_bandwidth = None, kernel = None):
         clusters = []  
         for cluster_label in df['assunto'].unique():
             if (cluster_label == None or cluster_label == -1):
@@ -22,9 +35,10 @@ class ClusterizadorTemporal:
                 'id': int(cluster_label), 
                 'subclusters': self.gerar_subclusters(noticias_do_cluster, denominador_bandwidth, kernel)
             })
+        clusters = sorted(clusters, key=lambda cluster: cluster['subclusters'][0]['evento']['data_publ'], reverse=True)
         return clusters
 
-    def gerar_subclusters(self, subconjunto_noticias, denominador_bandwidth = DENOMINADOR_BANDWIDTH_DEFAULT, kernel = KERNEL_DEFAULT):
+    def gerar_subclusters(self, subconjunto_noticias, denominador_bandwidth = None, kernel = None):
         datas = subconjunto_noticias['data_publ']
         datas_as_seconds = np.array([(d-datas[0]).total_seconds() for d in datas])
         resultado_kde = self.aplicar_kde(datas_as_seconds, denominador_bandwidth, kernel)
@@ -61,7 +75,13 @@ class ClusterizadorTemporal:
                 
         return subclusters
 
-    def aplicar_kde(self, samples, denominador_bandwidth = DENOMINADOR_BANDWIDTH_DEFAULT, kernel = KERNEL_DEFAULT):
+    def aplicar_kde(self, samples, denominador_bandwidth = None, kernel = None):
+        configs_dict = self.carregar_configs()
+        if (denominador_bandwidth == None):
+            denominador_bandwidth = int(configs_dict['denominador_bandwidth'])
+        if (kernel == None):
+            kernel = configs_dict['kernel']
+
         eixo_x = np.linspace(start = samples[0], stop = samples[-1], num=100, dtype = np.float64) # Cria o eixo x do gráfico com 100 posições distribuídas da primeira data até a última data
         eixo_x = np.sort(np.unique(np.concatenate([eixo_x, samples]))) # Inclui no eixo x os próprios valores das datas
         samples_reshaped = samples.reshape(-1, 1)
@@ -73,6 +93,14 @@ class ClusterizadorTemporal:
         maximos_locais = argrelextrema(eixo_y, np.greater_equal)[0]
 
         return {'minimos_locais': minimos_locais, 'maximos_locais': maximos_locais, 'eixo_x': eixo_x, 'eixo_y': eixo_y}
+
+    def executar(self, df):
+        print('\nIniciando clusterização por data...')
+        #noticias_df = util.carregar_todas_as_noticias()
+        print(str(len(df)) + ' noticias serão clusterizadas...')
+        #df['conteudo_vetorizado'] = [np.array(reg) for reg in noticias_df['conteudo_vetorizado']]
+        clusters = self.clusterizar(df)
+        self.salvar_clusters(clusters)
 
 
 if __name__ == "__main__":

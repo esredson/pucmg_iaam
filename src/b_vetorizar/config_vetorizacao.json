@@ -1,5 +1,5 @@
 {
-	"usar_texto_limpo": "true",
-	"incluir_resumo": "false",
-    "modelo": "SBERT"
+	"usar_texto_limpo": "True",
+	"incluir_resumo": "False",
+    "modelo": "WORD2VEC"
 }

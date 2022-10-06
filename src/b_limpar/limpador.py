@@ -37,6 +37,8 @@ class Limpador:
 				]
 			}))
 			noticias_df = pd.json_normalize(noticias_ls)
+			if (len(noticias_df) == 0):
+				return noticias_df
 			noticias_df = noticias_df.reset_index(drop=True)
 			noticias_df = noticias_df.sort_values('data_publ')
 			if 'ignorar' not in noticias_df:
@@ -44,9 +46,11 @@ class Limpador:
 			return noticias_df
 
 	def executar(self):
-		print('\nIniciando limpeza do texto...')
+		print('\nIniciando limpeza do texto')
 		noticias_df = self.carregar_noticias_nao_limpas()
-		print(str(len(noticias_df)) + ' noticias serão limpas...')
+		print(str(len(noticias_df)) + ' noticias serão limpas')
+		if (len(noticias_df) == 0):
+			return
 		self.limpar(noticias_df)
 		util.armazenar_todas(noticias_df)
 

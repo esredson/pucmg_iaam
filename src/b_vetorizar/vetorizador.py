@@ -23,7 +23,7 @@ class Vetorizador:
 		self.model_word2vec = None
 
 	def carregar_noticias_nao_vetorizadas(self):
-		with MongoClient(host="localhost", port=27017) as client:
+		with MongoClient(host=util.host_mongodb(), port=27017) as client:
 			db = client.trabalho_puc
 			noticias_ls = list(db.noticias.find({
 				'$and': [
@@ -40,6 +40,8 @@ class Vetorizador:
 				]
 			}))
 			noticias_df = pd.json_normalize(noticias_ls)
+			if (len(noticias_df) == 0):
+				return noticias_df
 			noticias_df = noticias_df.reset_index(drop=True)
 			noticias_df = noticias_df.sort_values('data_publ')
 			if 'ignorar' not in noticias_df:
@@ -47,16 +49,28 @@ class Vetorizador:
 			return noticias_df
 
 	def carregar_configs(self):
-		with open(util.full_path('config.json', __file__)) as json_file:
+		with open(util.full_path('config_vetorizacao.json', __file__)) as json_file:
 			return json.load(json_file)
 
 	def executar(self):
+		print('\nIniciando vetorização')
 		noticias_df = self.carregar_noticias_nao_vetorizadas()
-		configs_dict = self.carregar_configs()
-		self.vetorizar(noticias_df, **configs_dict)
+		print(str(len(noticias_df)) + ' noticias serão vetorizadas...')
+		if (len(noticias_df) == 0):
+			return
+		self.vetorizar(noticias_df)
+		noticias_df['conteudo_vetorizado'] = [reg.tolist() for reg in noticias_df['conteudo_vetorizado']]
 		util.armazenar_todas(noticias_df)
 
-	def vetorizar(self, df, usar_texto_limpo = True, modelo = 'SBERT', incluir_resumo = False, reduzir_dimensionalidade = False ):
+	def vetorizar(self, df, usar_texto_limpo = None, modelo = None, incluir_resumo = None):
+		configs_dict = self.carregar_configs()
+		if (usar_texto_limpo == None):
+			usar_texto_limpo = (configs_dict['usar_texto_limpo'] == 'True')
+		if (modelo == None):
+			modelo = configs_dict['modelo']
+		if (incluir_resumo == None):
+			incluir_resumo = (configs_dict['incluir_resumo'] == 'True')
+
 		if (modelo == 'USE'):
 			self.vetorizar_use(df, usar_texto_limpo=usar_texto_limpo, incluir_resumo=incluir_resumo)
 		elif (modelo == 'SBERT'):
@@ -65,8 +79,6 @@ class Vetorizador:
 			self.vetorizar_word2vec(df, usar_texto_limpo=usar_texto_limpo, incluir_resumo=incluir_resumo)
 		else:
 			raise ValueError("Modelo de linguagem invalido")
-		if reduzir_dimensionalidade:
-			reduzir_dimensionalidade(df)
 
 	def vetorizar_tirando_a_media(self, list_of_docs, wv):
 		features = []

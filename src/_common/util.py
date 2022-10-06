@@ -19,6 +19,7 @@ def host_mongodb():
    return config('host_mongodb')
 
 def carregar_todas_as_noticias():
+	print('Carregando todas as notícias')
 	with MongoClient(host=host_mongodb(), port=27017) as client:
 		db = client.trabalho_puc
 		noticias_ls = list(db.noticias.find({}))
@@ -30,6 +31,7 @@ def carregar_todas_as_noticias():
 		return noticias_df
 
 def armazenar_todas(noticias_df):
+	print('Salvando todas as notícias')
 	with MongoClient(host="localhost", port=27017) as client: #mongodb
 		db = client.trabalho_puc
 		noticias_db = db.noticias

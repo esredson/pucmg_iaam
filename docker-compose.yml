@@ -1,34 +1,8 @@
 
 services:
     mongodb:
-        build: ./containers/mongodb
+        build: ./src/a_coletar_preprocessar
         container_name: mongodb
         ports:
             - "27017:27017"
-    batch:
-        build: ./containers/batch
-        container_name: batch
-        depends_on:
-            - mongodb
-        volumes:
-            - "./containers/batch/volume:/app"
-            - "./core:/core"
-    notebook:
-        build:
-            context: ./
-            dockerfile: ./containers/notebook/Dockerfile
-        container_name: notebook
-        depends_on: 
-            - mongodb
-        ports: 
-            - "8888:8888"
-        volumes:
-            - notebook_volume:/app/
-    #rest:
-        #build: ./containers/rest
-        #container_name: rest
-        #depends_on:
-            #- mongodb
-
-volumes:
-    notebook_volume:
+    
