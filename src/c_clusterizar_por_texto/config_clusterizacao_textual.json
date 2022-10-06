@@ -1,5 +1,5 @@
 {
 	"min_samples": "4",
-	"epsilon": "0.13",
+	"epsilon": "0.341808",
     "metric": "cosine"
 }
