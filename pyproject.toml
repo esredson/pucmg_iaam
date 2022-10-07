@@ -3,6 +3,7 @@ name = "pucmg_iaam"
 version = "0.1.0"
 description = ""
 authors = ["Edson Sales da Rocha <esredson@gmail.com>"]
+packages = [{include = "a_coletar_preprocessar", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.11"
