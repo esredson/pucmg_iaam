@@ -59,7 +59,10 @@ class Vetorizador:
 		if (len(noticias_df) == 0):
 			return
 		self.vetorizar(noticias_df)
-		noticias_df['conteudo_vetorizado'] = [reg.tolist() for reg in noticias_df['conteudo_vetorizado']]
+		try:
+			noticias_df['conteudo_vetorizado'] = [reg.tolist() for reg in noticias_df['conteudo_vetorizado']]
+		except AttributeError:
+			pass
 		util.armazenar_todas(noticias_df)
 
 	def vetorizar(self, df, usar_texto_limpo = None, modelo = None, incluir_resumo = None):

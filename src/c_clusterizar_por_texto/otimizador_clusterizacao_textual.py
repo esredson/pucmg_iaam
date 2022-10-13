@@ -31,6 +31,9 @@ class OtimizadorClusterizacaoTextual:
         random_state = util.config('random_state')
         ):
 
+        # Atualmente, o Hyperopt está sendo chamado muitas vezes pra otimizar só um hiperparâmetro.
+        # Pendência: usar melhor os recursos da ferramenta pra fazer essa otimização.
+
         resultado = []
         espaco_busca = {
             'epsilon': hp.uniform('epsilon', epsilon[0], epsilon[1]),
